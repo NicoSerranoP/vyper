@@ -99,6 +99,15 @@ def compile_codes(
             interfaces = interfaces[contract_name]
 
         compiler_data = CompilerData(source_code, contract_name, interfaces, source_id)
+        declared_functions = set(compiler_data.global_ctx._declared_functions)
+        unlocked_functions = set(compiler_data._unlocked_functions)
+        declared_functions.remove('__init__')
+        if declared_functions == unlocked_functions:
+            print("Well done, all functions were unlocked")
+        elif declared_functions.issubset(unlocked_functions):
+            raise ValueError('There are more unlocked functions than the ones declared')
+        elif unlocked_functions.issubset(declared_functions):
+            raise ValueError('Not all functions have been unlocked')
         for output_format in output_formats[contract_name]:
             if output_format not in OUTPUT_FORMATS:
                 raise ValueError(f"Unsupported format type {repr(output_format)}")

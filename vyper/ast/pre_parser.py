@@ -4,6 +4,8 @@ from tokenize import (
     COMMENT,
     NAME,
     OP,
+    NEWLINE,
+    NL,
     TokenError,
     TokenInfo,
     tokenize,
@@ -82,7 +84,12 @@ def pre_parse(code: str) -> Tuple[ClassTypes, str]:
         Reformatted python source string.
     """
     result = []
+    unlocked_functions = []
     previous_keyword = None
+    pk = None
+    '''sl = 0
+    sc = 0
+    '''
     class_types: ClassTypes = {}
 
     try:
@@ -91,7 +98,6 @@ def pre_parse(code: str) -> Tuple[ClassTypes, str]:
 
         for token in g:
             toks = [token]
-
             typ = token.type
             string = token.string
             start = token.start
@@ -125,8 +131,64 @@ def pre_parse(code: str) -> Tuple[ClassTypes, str]:
                 raise SyntaxException(
                     "Semi-colon statements not allowed", code, start[0], start[1]
                 )
+            #This is code added for programming languages-----------------------
+            if (typ, string) == (NAME, "unlock"):
+                pk = string
+                '''sl = start[0]
+                sc = start[1]
+                cont = 0
+                '''
+                continue
+            if (typ, string, pk) == (OP, "[", "unlock"):
+                continue
+            if (typ, pk) == (NAME, "unlock"):
+                unlocked_functions.extend([string])
+                #Insert the flag activator for that function here
+                '''new_name = "ul_" + string
+                len_name = len(new_name)
+                new_line = "self." + new_name + " = True\n"
+                self_line = [TokenInfo(NAME, "self", (sl,sc), (sl,sc+4), new_line)]
+                sc = sc + 4
+                result.extend(self_line)
+                dot = [TokenInfo(OP, ".", (sl,sc), (sl,sc+1), new_line)]
+                sc = sc + 1
+                result.extend(dot)
+                unlock_name = [TokenInfo(NAME, new_name, (sl,sc), (sl,sc+len_name), new_line)]
+                sc = sc + len_name
+                result.extend(unlock_name)
+                cont = cont + 1
+                '''
+                continue
+            if (typ, string, pk) == (OP, ",", "unlock"):
+                '''comma = [TokenInfo(OP, "=", (sl,sc), (sl,sc+1), new_line)]
+                sc = sc + 1
+                result.extend(comma)
+                '''
+                continue
+            if (typ, string, pk) == (OP, "]", "unlock"):
+                continue
+            if (typ, string, pk) == (NEWLINE, "\n", "unlock"):
+                '''if (cont!=0):
+                    equal = [TokenInfo(OP, "=", (sl,sc), (sl,sc+1), new_line)]
+                    sc = sc + 1
+                    result.extend(equal)
+                    true = [TokenInfo(NAME, "True", (sl,sc), (sl,sc+4), new_line)]
+                    sc = sc + 4
+                    result.extend(true)
+                    space = [TokenInfo(NEWLINE, "\n", (sl,sc), (sl,sc+1), new_line)]
+                    sc = sc + 1
+                    result.extend(space)
+                sl = 0
+                sc = 0
+                cont = 0
+                '''
+                pk = None
+                continue
+            #The added code end here--------------------------------------------
             result.extend(toks)
+        #for r in result:
+            #print(r)
     except TokenError as e:
         raise SyntaxException(e.args[0], code, e.args[1][0], e.args[1][1]) from e
 
-    return class_types, untokenize(result).decode("utf-8")
+    return class_types, unlocked_functions, untokenize(result).decode("utf-8")

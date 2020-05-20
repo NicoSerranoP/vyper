@@ -1,6 +1,6 @@
 import copy
 import warnings
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 
 from vyper import ast as vy_ast
 from vyper import compile_lll, optimizer
@@ -66,12 +66,13 @@ class CompilerData:
         self.source_code = source_code
         self.interface_codes = interface_codes
         self.source_id = source_id
+        self._unlocked_functions = []
 
     @property
     def vyper_module(self) -> vy_ast.Module:
         if not hasattr(self, "_vyper_module"):
-            self._vyper_module = generate_ast(self.source_code, self.source_id)
-
+            #self._vyper_module = generate_ast(self.source_code, self.source_id)
+            self._vyper_module, self._unlocked_functions = generate_ast(self.source_code, self.source_id)
         return self._vyper_module
 
     @property
@@ -132,8 +133,8 @@ class CompilerData:
             self._bytecode_runtime = generate_bytecode(self.assembly_runtime)
         return self._bytecode_runtime
 
-
-def generate_ast(source_code: str, source_id: int) -> vy_ast.Module:
+#def generate_ast(source_code: str, source_id: int) -> vy_ast.Module:
+def generate_ast(source_code: str, source_id: int) -> Tuple[vy_ast.Module, List]:
     """
     Generate a Vyper AST from source code.
 

@@ -57,8 +57,10 @@ def process_arg(index, arg, expected_arg_typelist, function_name, context):
                 return sub
         else:
             # Does not work for unit-endowed types inside compound types, e.g. timestamp[2]
+            ast, functions = vy_ast.parse_to_ast(expected_arg)
             parsed_expected_type = context.parse_type(
-                vy_ast.parse_to_ast(expected_arg)[0].value,
+                #vy_ast.parse_to_ast(expected_arg)[0].value,
+                ast[0].value,
                 'memory',
             )
             if isinstance(parsed_expected_type, BaseType):

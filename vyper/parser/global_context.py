@@ -41,6 +41,7 @@ class GlobalContext:
         self._implemented_interfaces = set()
         self._nonrentrant_counter = 0
         self._nonrentrant_keys = dict()
+        self._declared_functions = []
 
     # Parse top-level functions and variables
     @classmethod
@@ -101,6 +102,7 @@ class GlobalContext:
                     global_ctx.add_globals_and_events(item)
             # Function definitions
             elif isinstance(item, vy_ast.FunctionDef):
+                global_ctx._declared_functions.extend([item.name])
                 if item.name in global_ctx._globals:
                     raise FunctionDeclarationException(
                         f"Function name shadowing a variable name: {item.name}"
@@ -239,7 +241,9 @@ class GlobalContext:
     # Parser for a single line
     @staticmethod
     def parse_line(source_code: str) -> list:
-        parsed_ast = vy_ast.parse_to_ast(source_code)[0]
+        #parsed_ast = vy_ast.parse_to_ast(source_code)[0]
+        parsed_ast, functions = vy_ast.parse_to_ast(source_code)
+        parsed_ast = parsed_ast[0]
         return parsed_ast
 
     # A struct is a list of members
