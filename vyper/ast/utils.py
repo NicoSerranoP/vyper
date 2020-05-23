@@ -26,7 +26,21 @@ def parse_to_ast(source_code: str, source_id: int = 0) -> Tuple[vy_ast.Module, L
     if "\x00" in source_code:
         raise ParserException("No null bytes (\\x00) allowed in the source code.")
     class_types, unlocked_functions, reformatted_code = pre_parse(source_code)
-    source_code = reformatted_code
+
+    new_code = ""
+    for function in unlocked_functions:
+        new_declaration = "ul22_"+function+": bool\n"
+        new_code = new_declaration + new_code
+
+    for line in reformatted_code.splitlines():
+        new_code = new_code + line + "\n"
+        if (line[:4] == "def "):
+            for function in unlocked_functions:
+                new_assert = "    assert self.ul22_"+function+"\n"
+                new_code = new_code + new_assert
+
+    source_code = new_code
+    reformatted_code = new_code
     try:
         py_ast = python_ast.parse(reformatted_code)
     except SyntaxError as e:

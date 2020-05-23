@@ -1077,11 +1077,28 @@ class Assign(VyperNode):
     __slots__ = ("target", "value")
 
     def __init__(self, *args, **kwargs):
-        if len(kwargs["targets"]) > 1:
+        if len(kwargs["targets"]) > 2:
             _raise_syntax_exc("Assignment statement must have one target", kwargs)
 
-        kwargs["target"] = kwargs.pop("targets")[0]
-        super().__init__(*args, **kwargs)
+        if len(kwargs["targets"]) == 2:
+            for variable in kwargs["targets"]:
+                if (variable.attr[:5] != "ul22_"):                
+                    _raise_syntax_exc("Assignment statement must have one target", kwargs)
+
+            variables = kwargs.pop("targets")
+            kwargs["target"] = variables[0]
+            super().__init__(*args, **kwargs)
+            kwargs["target"] = variables[1]
+            super().__init__(*args, **kwargs)
+        else:
+            kwargs["target"] = kwargs.pop("targets")[0]
+            super().__init__(*args, **kwargs)
+
+        #if len(kwargs["targets"]) > 1:
+        #    _raise_syntax_exc("Assignment statement must have one target", kwargs)
+
+        #kwargs["target"] = kwargs.pop("targets")[0]
+        #super().__init__(*args, **kwargs)
 
 
 class AnnAssign(VyperNode):

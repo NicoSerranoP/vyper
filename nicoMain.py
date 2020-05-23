@@ -35,6 +35,6 @@ for var in defs:
 '''
 
 # This is the main command to compile a Vyper source code
-print("Trying to whole compile")
-final = compile_code(source_code.read())
-#bytecode = final["bytecode"]
+print("Trying the whole compilation process")
+final = compile_code(source_code.read(), output_formats = ['abi','bytecode','source_map'] )
+bytecode = final["bytecode"]

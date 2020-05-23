@@ -86,10 +86,11 @@ def pre_parse(code: str) -> Tuple[ClassTypes, str]:
     result = []
     unlocked_functions = []
     previous_keyword = None
-    pk = None
-    '''sl = 0
+    unlock_flag = False
+    sl = 0
     sc = 0
-    '''
+    function_flag = False
+    startcol = False
     class_types: ClassTypes = {}
 
     try:
@@ -132,19 +133,25 @@ def pre_parse(code: str) -> Tuple[ClassTypes, str]:
                     "Semi-colon statements not allowed", code, start[0], start[1]
                 )
             #This is code added for programming languages-----------------------
-            if (typ, string) == (NAME, "unlock"):
-                pk = string
-                '''sl = start[0]
+
+            if (typ, string) == (NAME, "def"):
+                if (function_flag):
+                    raise ValueError("There is one function without unlock statement")
+                function_flag = True                
+
+            if (typ, string, function_flag) == (NAME, "unlock", True):
+                unlock_flag = True
+                sl = start[0]
                 sc = start[1]
                 cont = 0
-                '''
+
                 continue
-            if (typ, string, pk) == (OP, "[", "unlock"):
+            if (typ, string, unlock_flag, function_flag) == (OP, "[", True, True):
                 continue
-            if (typ, pk) == (NAME, "unlock"):
+            if (typ, unlock_flag, function_flag) == (NAME, True, True):
                 unlocked_functions.extend([string])
                 #Insert the flag activator for that function here
-                '''new_name = "ul_" + string
+                new_name = "ul22_" + string
                 len_name = len(new_name)
                 new_line = "self." + new_name + " = True\n"
                 self_line = [TokenInfo(NAME, "self", (sl,sc), (sl,sc+4), new_line)]
@@ -157,18 +164,18 @@ def pre_parse(code: str) -> Tuple[ClassTypes, str]:
                 sc = sc + len_name
                 result.extend(unlock_name)
                 cont = cont + 1
-                '''
+
                 continue
-            if (typ, string, pk) == (OP, ",", "unlock"):
-                '''comma = [TokenInfo(OP, "=", (sl,sc), (sl,sc+1), new_line)]
+            if (typ, string, unlock_flag, function_flag) == (OP, ",", True, True):
+                comma = [TokenInfo(OP, "=", (sl,sc), (sl,sc+1), new_line)]
                 sc = sc + 1
                 result.extend(comma)
-                '''
+
                 continue
-            if (typ, string, pk) == (OP, "]", "unlock"):
+            if (typ, string, unlock_flag, function_flag) == (OP, "]", True, True):
                 continue
-            if (typ, string, pk) == (NEWLINE, "\n", "unlock"):
-                '''if (cont!=0):
+            if (typ, string, unlock_flag, function_flag) == (NEWLINE, "\n", True, True):
+                if (cont!=0):
                     equal = [TokenInfo(OP, "=", (sl,sc), (sl,sc+1), new_line)]
                     sc = sc + 1
                     result.extend(equal)
@@ -181,13 +188,11 @@ def pre_parse(code: str) -> Tuple[ClassTypes, str]:
                 sl = 0
                 sc = 0
                 cont = 0
-                '''
-                pk = None
+                unlock_flag = False
+                function_flag = False
                 continue
             #The added code end here--------------------------------------------
             result.extend(toks)
-        #for r in result:
-            #print(r)
     except TokenError as e:
         raise SyntaxException(e.args[0], code, e.args[1][0], e.args[1][1]) from e
 
