@@ -5,8 +5,9 @@ To use this language you need to follow these instructions:
 1. install all dependencies following the instructions in [installing-vyper](https://vyper.readthedocs.io/en/latest/installing-vyper.html)
 1. Write a contract in the examples directory
 1. Compile the contract using the nicoMain.py script
-1. Load the script to a blokchain network using the loadFile.py script
-6. Interact with the contract using the loadFile.py script
+1. Install the Ethereum Virtual Machine [Aleth](https://github.com/ethereum/aleth)
+1. Interact with the EVM using the ``` aleth-vm ``` command
+1. For more instructions check the comments in nicoMain.py
 
 <img src="https://raw.githubusercontent.com/vyperlang/vyper/master/logo/vyper-logo-transparent.svg?sanitize=true" alt="" width="110">
 
