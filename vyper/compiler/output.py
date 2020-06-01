@@ -70,6 +70,7 @@ def build_abi_output(compiler_data: CompilerData) -> list:
         if func_name in gas_estimates:
             # TODO: mutation
             func["gas"] = gas_estimates[func_name]
+    abi = str(abi).replace("'",'"').replace("False","false").replace("True","true")
     return abi
 
 

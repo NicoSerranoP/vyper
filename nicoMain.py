@@ -38,3 +38,4 @@ for var in defs:
 print("Trying the whole compilation process")
 final = compile_code(source_code.read(), output_formats = ['abi','bytecode','source_map'] )
 bytecode = final["bytecode"]
+abi = final['abi']
