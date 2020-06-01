@@ -1,5 +1,12 @@
 # This is not the real Vyper Repository. To check the Vyper repository go to: https://github.com/vyperlang/vyper
 
+To use this language you need to follow these instructions:
+1. Clone the repository
+1. install all dependencies following the instructions in [installing-vyper](https://vyper.readthedocs.io/en/latest/installing-vyper.html)
+1. Write a contract in the examples directory
+1. Compile the contract using the nicoMain.py script
+1. Load the script to a blokchain network using the loadFile.py script
+6. Interact with the contract using the loadFile.py script
 
 <img src="https://raw.githubusercontent.com/vyperlang/vyper/master/logo/vyper-logo-transparent.svg?sanitize=true" alt="" width="110">
 

@@ -1,7 +1,7 @@
 value: public(uint256)
 seller: public(address)
 buyer: public(address)
-unlocked: public(bool)
+#unlocked: public(bool)
 
 @public
 @payable
